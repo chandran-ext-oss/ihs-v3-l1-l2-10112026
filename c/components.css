@@ -1113,3 +1113,24 @@ html body #programs.kcs-x .kc .kc-b p{display:flex!important;align-items:flex-en
 @media(hover:none){html body #programs.kcs-x .kc .kc-b p{display:none!important}}
 html body #programs.kcs-x .kc .kc-b p{aspect-ratio:16/10!important;height:auto!important;bottom:auto!important;width:100%!important;max-height:none!important}
 html body #programs.kcs-x .kc .kc-b p{-webkit-box-pack:end!important;justify-content:flex-end!important}
+/* intro: heading and body always centred */
+#intro,#intro .in,#intro h2,#intro p{text-align:center!important}
+#intro p{margin-left:auto!important;margin-right:auto!important;text-wrap:balance}
+
+/* ===== v103: one card radius everywhere; sections sized to the viewport ===== */
+:root{--r:16px;--r-l:16px;--r-m:14px;--r-s:10px;--r-card:16px}
+.cfaq .fqw{border-radius:var(--frame-r)}
+:root:has(#journey.cj){--sec-y:clamp(44px,8vh,112px)}
+:root:has(#journey.cj) .cint{padding-block:clamp(48px,9vh,120px)!important}
+.md3-im{border-radius:var(--r-card)}.md3-b{border-radius:var(--r-card)}
+#programs.kcs-x .kc .kc-im,#programs.kcs-x .kc .kc-b p{border-radius:var(--r-card)!important}
+.rim,.rhv{border-radius:var(--r-card)}
+.md3-info{align-content:start}
+#programs.kcs-x .kc .kc-im,html body #programs.kcs-x .kc .kc-b p,.rim,.rhv{aspect-ratio:2/1!important}
+html body #programs.kcs-x .kc .kc-b p{aspect-ratio:2/1!important}
+#programs.kcs-x .kc-all{height:1px;margin:0;padding:0;overflow:hidden;opacity:0}
+#programs.kcs-x .kc-all:focus-within{height:auto;opacity:1;margin-top:24px;padding:4px}
+#programs.kcs-x .hd{margin-bottom:clamp(20px,3vh,40px)!important}
+#programs.kcs-x .kc-grid{gap:clamp(20px,3vh,32px) clamp(20px,2vw,32px)!important}
+/* cards 20% taller */
+#programs.kcs-x .kc .kc-im,html body #programs.kcs-x .kc .kc-b p,.rim,.rhv{aspect-ratio:5/3!important}

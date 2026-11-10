@@ -91,8 +91,7 @@ var TOUR=[['x-hall','Arrival','Open verandas look out over the gardens at the fo
 ['v8','Rest and recovery','Quiet time outdoors to let the benefits settle between therapies.']];
 mounts('tour').forEach(function(m){
  var sec=document.createElement('section');sec.id='tour';sec.className='tour';
- sec.innerHTML='<div class="wrap intro"><div class="head"><h2>Step into a serene sanctuary <em>dedicated to your recovery</em></h2><p class="lede">Nestled in peaceful surroundings, our quiet therapy suites, clinical rooms, and open yoga halls offer a tranquil retreat for deep physical renewal.</p></div></div>'+
- '<div class="track"><div class="stage"><div class="cam"><div class="world"><div class="floor"></div></div></div><div class="glow"></div><div class="hud"><div class="wrap"><div class="now" aria-live="polite"><small class="tNo">Stop 1 of 8</small><b class="tName"></b><span class="tDesc"></span></div><div class="prog"></div></div></div></div></div><div class="wrap flat"></div>';
+ sec.innerHTML='<div class="track"><div class="stage"><div class="wrap intro"><div class="head"><h2>Step into a serene sanctuary <em>dedicated to your recovery</em></h2><p class="lede">Nestled in peaceful surroundings, our quiet therapy suites, clinical rooms, and open yoga halls offer a tranquil retreat for deep physical renewal.</p></div></div><div class="cam"><div class="world"><div class="floor"></div></div></div><div class="glow"></div><div class="hud"><div class="wrap"><div class="now" aria-live="polite"><small class="tNo">Stop 1 of 8</small><b class="tName"></b><span class="tDesc"></span></div><div class="prog"></div></div></div></div></div><div class="wrap flat"></div>';
  m.replaceWith(sec);
  var N=TOUR.length,D=760,track=sec.querySelector('.track'),world=sec.querySelector('.world'),stage=sec.querySelector('.stage'),prog=sec.querySelector('.prog');track.style.setProperty('--n',N);
  sec.querySelector('.flat').innerHTML=TOUR.map(function(t){return '<figure><img src="i/'+t[0]+'.jpg" alt="'+esc(t[1])+'" loading="lazy"><figcaption>'+esc(t[1])+'</figcaption></figure>'}).join('');
@@ -100,11 +99,11 @@ mounts('tour').forEach(function(m){
  var pns=TOUR.map(function(t,i){var el=document.createElement('div');el.className='pn';el.innerHTML='<figure><img src="i/'+t[0]+'.jpg" alt="'+esc(t[1])+'"><figcaption><span>'+String(i+1).padStart(2,'0')+'</span>'+esc(t[1])+'</figcaption></figure>';world.appendChild(el);return el});
  prog.innerHTML=TOUR.map(function(){return '<i></i>'}).join('');
  var bars=prog.querySelectorAll('i'),last=-1,tNo=sec.querySelector('.tNo'),tName=sec.querySelector('.tName'),tDesc=sec.querySelector('.tDesc');
- function place(){var x=narrow.matches?120:340,ry=narrow.matches?32:38;pns.forEach(function(p,i){var side=i%2?1:-1;p.dataset.z=-(i*D+700);p.style.transform='translate3d('+(side*x)+'px,0,'+(-(i*D+700))+'px) rotateY('+(-side*ry)+'deg)'})}
+ function place(){var x=narrow.matches?Math.round(innerWidth*.1):Math.round(Math.min(340,innerWidth*.235)),ry=narrow.matches?16:38;pns.forEach(function(p,i){var side=i%2?1:-1;p.dataset.z=-(i*D+560);p.style.transform='translate3d('+(side*x)+'px,0,'+(-(i*D+560))+'px) rotateY('+(-side*ry)+'deg)'})}
  function frame(){var r=track.getBoundingClientRect(),span=track.offsetHeight-stage.offsetHeight;if(!(span>0))return;var p=Math.max(0,Math.min(1,-r.top/span));
   var cam=p*(N-1)*D+260,bob=Math.sin(cam/110)*5,sway=Math.sin(cam/220)*.6;
   world.style.transform='translate3d(0,'+bob+'px,'+cam+'px) rotateZ('+sway+'deg)';
-  pns.forEach(function(el){var z=+el.dataset.z+cam;var o=z>-80?Math.max(0,1-(z+80)/420):z<-D*3.2?Math.max(0,1+(z+D*3.2)/D):1;el.style.opacity=o.toFixed(3)});
+  pns.forEach(function(el){var z=+el.dataset.z+cam;var fs=narrow.matches?-400:-220,o=z>fs?Math.max(0,1-(z-fs)/(narrow.matches?200:230)):z<-D*3.2?Math.max(0,1+(z+D*3.2)/D):1;el.style.opacity=o.toFixed(3)});
   var k=Math.max(0,Math.min(N-1,Math.round((cam-260)/D)));
   if(k!==last){last=k;tNo.textContent='Stop '+(k+1)+' of '+N;tName.textContent=TOUR[k][1];tDesc.textContent=TOUR[k][2];[].forEach.call(bars,function(b,j){b.classList.toggle('on',j<=k)})}}
  place();if(!rm)frame();
@@ -257,3 +256,16 @@ document.querySelectorAll('form[data-enquiry]').forEach(function(f){
   function fail(){btn.disabled=false;btn.classList.remove('is-busy');var o=f.querySelector('.ok');if(o)o.textContent='Something went wrong. Please try again, or call +91 83000 45333.'}
   var ep=f.dataset.endpoint;if(ep){fetch(ep,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(function(r){r.ok?done():fail()}).catch(fail)}else{setTimeout(done,600)}
  })})})();
+
+/* ===================== Scroll-to-top (all pages) ===================== */
+(function(){
+ if(document.querySelector('.totop'))return;
+ var b=document.createElement('button');b.type='button';b.className='totop';b.setAttribute('aria-label','Scroll to top');
+ b.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>';
+ document.body.appendChild(b);
+ var on=false,tk=false;
+ function upd(){var s=(window.pageYOffset||document.documentElement.scrollTop)>Math.max(480,innerHeight*.6);if(s!==on){on=s;b.classList.toggle('on',s)}}
+ addEventListener('scroll',function(){if(!tk){tk=true;requestAnimationFrame(function(){upd();tk=false})}},{passive:true});
+ b.addEventListener('click',function(){var rm=matchMedia('(prefers-reduced-motion:reduce)').matches;window.scrollTo({top:0,behavior:rm?'auto':'smooth'});setTimeout(function(){var h=document.querySelector('header a,header button');if(h)h.focus({preventScroll:true})},rm?0:600)});
+ upd();
+})();
